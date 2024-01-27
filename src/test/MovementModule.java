@@ -64,10 +64,10 @@ public class MovementModule extends Module {
             source.moveY((int) (speed * time));
         }
         if (left) {
-            source.moveX((int) -(speed * time));
+            source.moveX((int) (speed * time));
         }
         if (right) {
-            source.moveX((int) (speed * time));
+            source.moveX((int) -(speed * time));
         }
     }
 

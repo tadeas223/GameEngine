@@ -1,6 +1,6 @@
 package test;
 
-import Tools.Vector2;
+import tools.Vector2;
 import gameObject.GameObject;
 
 import javax.imageio.ImageIO;
@@ -14,9 +14,9 @@ public class Player extends GameObject {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addModule(new MovementModule(100));
+        addModule(new MovementModule(300));
         clampSizeToTexture();
         setPosition(20, 20);
-        setScale(new Vector2(1, 1));
+        setScale(new Vector2(5, 5));
     }
 }

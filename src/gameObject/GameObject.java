@@ -1,6 +1,6 @@
 package gameObject;
 
-import Tools.Vector2;
+import tools.Vector2;
 import engine.Updatable;
 
 import java.awt.*;

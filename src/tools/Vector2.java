@@ -1,4 +1,4 @@
-package Tools;
+package tools;
 
 /**
  * This class is used for storing two flot values.
