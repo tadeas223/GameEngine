@@ -5,16 +5,17 @@ import gameObject.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Iterator;
 import java.util.PriorityQueue;
 
+/**
+ * This class draws each {@link GameObject} to the screen.
+ */
 public class GamePanel extends JPanel {
-    Engine engine = Engine.getInstance();
-
-    public GamePanel(){
+    public GamePanel() {
         setDoubleBuffered(true);
         setVisible(true);
     }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -23,23 +24,15 @@ public class GamePanel extends JPanel {
 
         PriorityQueue<GameObject> priorityQueue = new PriorityQueue<>();
 
-        for(GameObject gameObject : engine.getGameObjects()){
+        for (GameObject gameObject : Engine.getInstance().getGameObjects()) {
             priorityQueue.add(gameObject);
-            for(GameObject child : gameObject.getChildren()){
-                priorityQueue.add(child);
-            }
+            priorityQueue.addAll(gameObject.getChildren());
         }
 
-        Iterator iterator = priorityQueue.iterator();
-
-        while(iterator.hasNext()){
-            GameObject go = (GameObject) iterator.next();
-            if(go.isActive()){
+        for (GameObject go : priorityQueue) {
+            if (go.isActive()) {
                 Rectangle rect = go.getRectangle();
-                g2.drawImage(go.getTexture(),rect.x,rect.y,
-                        (int)(rect.width*go.getScale().x),
-                        (int)(rect.height*go.getScale().y),
-                        this);
+                g2.drawImage(go.getTexture(), rect.x, rect.y, (int) (rect.width * go.getScale().x), (int) (rect.height * go.getScale().y), this);
             }
         }
 

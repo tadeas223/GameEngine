@@ -1,30 +1,26 @@
 package window;
 
-import engine.Engine;
-
 import javax.swing.*;
 
 
+/**
+ * The only purpose of this class is to hold a {@link GamePanel},
+ * because a {@link GamePanel} cant create its own window,
+ * and this class cant draw anything on the screen.
+ */
 public class GameFrame extends JFrame {
-    private Engine engine;
+    private final GamePanel gamePanel = new GamePanel();
 
-    private GamePanel gamePanel = new GamePanel();
-
-    public GamePanel getGamePanel() {
-        return gamePanel;
-    }
-
-    public GameFrame(){
-        engine = Engine.getInstance();
-
-        addWindowListener(new ExitOnClose());
-
+    public GameFrame() {
         add(gamePanel);
 
-        setSize(500,500);
+        setSize(500, 500);
         setVisible(true);
         setFocusable(true);
         requestFocus();
+    }
 
+    public GamePanel getGamePanel() {
+        return gamePanel;
     }
 }

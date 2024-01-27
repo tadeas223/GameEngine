@@ -1,5 +1,8 @@
 package Tools;
 
+/**
+ * This class is used for storing two flot values.
+ */
 public class Vector2 {
     public float x;
     public float y;

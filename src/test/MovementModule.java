@@ -1,11 +1,8 @@
 package test;
 
-import engine.GlobalKeyListener;
-import gameObject.GameObject;
+import engine.Engine;
 import gameObject.Module;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -21,14 +18,13 @@ public class MovementModule extends Module {
     private int rightKey = KeyEvent.VK_A;
     private int leftKey = KeyEvent.VK_D;
 
-    public MovementModule(GameObject source, float speed) {
-        super(source);
+    public MovementModule(float speed) {
         this.speed = speed;
     }
 
     @Override
     public void update(float time) {
-        engine.addKeyListener(new KeyListener() {
+        Engine.getInstance().addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -61,16 +57,16 @@ public class MovementModule extends Module {
             }
         });
 
-        if(up){
+        if (up) {
             source.moveY((int) -(speed * time));
         }
-        if(down){
+        if (down) {
             source.moveY((int) (speed * time));
         }
-        if(left){
+        if (left) {
             source.moveX((int) -(speed * time));
         }
-        if(right){
+        if (right) {
             source.moveX((int) (speed * time));
         }
     }
@@ -115,7 +111,7 @@ public class MovementModule extends Module {
         this.leftKey = leftKey;
     }
 
-    public void setKeys(int upKey, int downKey, int leftKey, int rightKey){
+    public void setKeys(int upKey, int downKey, int leftKey, int rightKey) {
         this.upKey = upKey;
         this.downKey = downKey;
         this.leftKey = leftKey;
