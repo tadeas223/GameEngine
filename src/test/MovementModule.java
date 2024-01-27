@@ -20,10 +20,7 @@ public class MovementModule extends Module {
 
     public MovementModule(float speed) {
         this.speed = speed;
-    }
 
-    @Override
-    public void update(float time) {
         Engine.getInstance().addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -56,6 +53,10 @@ public class MovementModule extends Module {
                 }
             }
         });
+    }
+
+    @Override
+    public void update(float time) {
 
         if (up) {
             source.moveY((int) -(speed * time));

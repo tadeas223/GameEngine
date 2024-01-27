@@ -57,6 +57,15 @@ public class GameObject implements Updatable, Comparable<GameObject> {
         rectangle.height = texture.getHeight();
     }
 
+    public Module findModule(Class moduleClass){
+        for(Module m : modules){
+            if(m.getClass() == moduleClass){
+                return m;
+            }
+        }
+        return null;
+    }
+
     //region Get&Set&Add&Remove
     public void addModule(Module module) {
         module.source = this;
