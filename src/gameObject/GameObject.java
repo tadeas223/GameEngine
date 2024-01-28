@@ -21,7 +21,7 @@ public class GameObject implements Updatable, Comparable<GameObject> {
     private BufferedImage texture;
     private Rectangle rectangle = new Rectangle(0, 0, 0, 0);
     private Vector2 scale = new Vector2(1, 1);
-    private HashSet<Module> modules = new HashSet<>();
+    private ArrayList<Module> modules = new ArrayList<>();
     private ArrayList<GameObject> children = new ArrayList<>();
 
     /**
@@ -87,11 +87,11 @@ public class GameObject implements Updatable, Comparable<GameObject> {
         children.remove(gameObject);
     }
 
-    public HashSet<Module> getModules() {
+    public ArrayList<Module> getModules() {
         return modules;
     }
 
-    public void setModules(HashSet<Module> modules) {
+    public void setModules(ArrayList<Module> modules) {
         this.modules = modules;
     }
 
