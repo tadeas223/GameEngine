@@ -32,7 +32,7 @@ public class GamePanel extends JPanel {
         for (GameObject go : priorityQueue) {
             if (go.isActive()) {
                 Rectangle rect = go.getRectangle();
-                g2.drawImage(go.getTexture(), rect.x, rect.y, (int) (rect.width * go.getScale().x), (int) (rect.height * go.getScale().y), this);
+                g2.drawImage(go.getTexture(), rect.x, rect.y, rect.width, rect.height, this);
             }
         }
 

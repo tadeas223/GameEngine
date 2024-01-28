@@ -127,6 +127,23 @@ public class GameObject implements Updatable, Comparable<GameObject> {
 
     public void setScale(Vector2 scale) {
         this.scale = scale;
+        rectangle = new Rectangle(rectangle.x,rectangle.y,
+                (int) (rectangle.width*scale.x),
+                (int) (rectangle.height * scale.y));
+
+        BufferedImage newTexture = new BufferedImage(rectangle.width,rectangle.height,BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newTexture.createGraphics();
+
+        g2.drawImage(texture,
+                rectangle.x,
+                rectangle.y,
+                rectangle.width,
+                rectangle.height,
+                null);
+
+        g2.dispose();
+
+        texture = newTexture;
     }
 
     public Rectangle getRectangle() {
