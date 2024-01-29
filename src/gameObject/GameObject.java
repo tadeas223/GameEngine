@@ -191,6 +191,7 @@ public class GameObject implements Updatable, Comparable<GameObject> {
     public void addModule(Module module) {
         module.source = this;
         modules.add(module);
+        module.start();
     }
 
     public void removeModule(Module module) {
@@ -239,11 +240,15 @@ public class GameObject implements Updatable, Comparable<GameObject> {
      */
     @Override
     public void update(float time) {
-        for (Updatable u : children) {
-            u.update(time);
+        for (GameObject g : children) {
+            if(g.isActive()){
+                g.update(time);
+            }
         }
         for (Module m : modules) {
-            m.update(time);
+            if(m.isActive()){
+                m.update(time);
+            }
         }
     }
 

@@ -54,17 +54,6 @@ public class Engine implements Runnable {
         return instance;
     }
 
-
-    /**
-     * Calls an update method in every {@linkplain GameObject} added to this class.
-     */
-    private void callUpdate() {
-        for (Updatable u : gameObjects) {
-            u.update(deltaTime);
-        }
-    }
-
-
     /**
      * This method is a constructor for this class.
      * It is included because when this class is instantiated,
@@ -80,6 +69,16 @@ public class Engine implements Runnable {
 
     //endregion
 
+    /**
+     * Calls an update method in every {@linkplain GameObject} added to this class.
+     */
+    private void callUpdate() {
+        for (GameObject g : gameObjects) {
+            if(g.isActive()){
+                g.update(deltaTime);
+            }
+        }
+    }
 
     //region Get&Set
 

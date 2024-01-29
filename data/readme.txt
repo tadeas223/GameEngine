@@ -1,0 +1,1 @@
+Here is are some example of custom file types such as .anim .animc

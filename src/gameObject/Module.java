@@ -10,8 +10,22 @@ import engine.Updatable;
  */
 public abstract class Module implements Updatable {
     protected GameObject source;
+    private boolean active = true;
 
+    public abstract void start();
     public GameObject getSource() {
         return source;
+    }
+
+    public void setSource(GameObject source) {
+        this.source = source;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
