@@ -58,11 +58,12 @@ public class Engine implements Runnable {
     /**
      * Calls an update method in every {@linkplain GameObject} added to this class.
      */
-    private void callUpdatable() {
+    private void callUpdate() {
         for (Updatable u : gameObjects) {
             u.update(deltaTime);
         }
     }
+
 
     /**
      * This method is a constructor for this class.
@@ -135,7 +136,7 @@ public class Engine implements Runnable {
 
             frame.repaint();
 
-            callUpdatable();
+            callUpdate();
 
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
