@@ -30,7 +30,7 @@ public class GamePanel extends JPanel {
         }
 
         for (GameObject go : priorityQueue) {
-            if (go.isActive()) {
+            if (go.isActive() && go.getTexture() != null) {
                 g2.drawImage(go.getTexture(),
                         go.getX(),
                         go.getY(),

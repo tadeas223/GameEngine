@@ -14,6 +14,9 @@ public class CollisionModule extends Module {
     private Rectangle collider;
     private boolean trigger;
 
+    private ArrayList<GameObject> collisions = new ArrayList<>();
+    ArrayList<CollisionListener> listeners = new ArrayList<>();
+
     private Vector2Int previousPos;
     private boolean showCollider = false;
 
@@ -37,10 +40,17 @@ public class CollisionModule extends Module {
 
                 if(child != source){
                     if(detectCollision(child)){
+                        if(!collisions.contains(child)){
+                            collisions.add(child);
+                            callListenerEnter(child);
+                        }
 
                         if(!trigger){
                             source.setPosition(previousPos);
                         }
+                    } else if(collisions.contains(child)){
+                        collisions.remove(child);
+                        callListenerExit(child);
                     }
                 }
 
@@ -48,13 +58,22 @@ public class CollisionModule extends Module {
 
             if(parent != source){
                 if(detectCollision(parent)){
+                    if(!collisions.contains(parent)){
+                        collisions.add(parent);
+                        callListenerEnter(parent);
+                    }
+
                     if(!trigger){
                         source.setPosition(previousPos);
                     }
+                } else if(collisions.contains(parent)){
+                    collisions.remove(parent);
+                    callListenerExit(parent);
                 }
             }
-
         }
+
+
 
         if(showCollider){
             colliderO.setPosition(source.getPosition());
@@ -117,6 +136,7 @@ public class CollisionModule extends Module {
         g2.dispose();
 
         colliderO.setTexture(texture);
+        colliderO.setLayer(-2);
 
         source.addChild(colliderO);
     }
@@ -124,5 +144,25 @@ public class CollisionModule extends Module {
     @Override
     public void start() {
         previousPos = new Vector2Int(source.getPosition());
+    }
+
+    public void callListenerEnter(GameObject g){
+        for (CollisionListener listener : listeners){
+            listener.onCollisionEnter(g);
+        }
+    }
+
+    public void callListenerExit(GameObject g){
+        for (CollisionListener listener : listeners){
+            listener.onCollisionExit(g);
+        }
+    }
+
+    public void addCollisionListener(CollisionListener listener){
+        listeners.add(listener);
+    }
+
+    public void removeColisionListener(CollisionListener listener){
+        listeners.remove(listener);
     }
 }

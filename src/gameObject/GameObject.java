@@ -40,6 +40,18 @@ public class GameObject implements Updatable, Comparable<GameObject> {
         this.name = name;
     }
 
+    public GameObject(GameObject gameObject){
+        this.name = gameObject.name;
+        this.parent = gameObject.parent;
+        this.layer = gameObject.layer;
+        this.active = gameObject.active;
+        this.texture = gameObject.texture;
+        this.position = gameObject.position;
+        this.scale = gameObject.scale;
+        this.modules = gameObject.modules;
+        this.children = gameObject.children;
+    }
+
 
     public Module findModule(Class<? extends Module> moduleClass) {
         for (Module m : modules) {

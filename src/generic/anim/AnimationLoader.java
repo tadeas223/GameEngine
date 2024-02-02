@@ -1,5 +1,7 @@
 package generic.anim;
 
+import tools.CustomFileReader;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,112 +13,54 @@ public class AnimationLoader {
     public static Animation loadAnimation(String path) {
         ArrayList<BufferedImage> images = new ArrayList<>();
         double wait = 0;
-        boolean loop = false;
-        ArrayList<String> lines = new ArrayList<>();
+        boolean loop;
 
-        try {
-            Scanner sc = new Scanner(new File(path + "/data.anim"));
+        String imageIDs = CustomFileReader.readSimpleValue(path+"/data.anim","IMAGES");
+        wait = Double.parseDouble(CustomFileReader.readSimpleValue(path+"/data.anim","WAIT"));
+        loop = Boolean.parseBoolean(CustomFileReader.readSimpleValue(path+"/data.anim","Loop"));
 
-            while (sc.hasNextLine()) {
-                lines.add(sc.nextLine());
-            }
-        } catch (IOException e) {
-            System.out.println("cant load animation");
-            throw new RuntimeException(e);
-        }
+        String[] split = imageIDs.split("-");
+        int startId = Integer.parseInt(split[0]);
+        int endId = Integer.parseInt(split[1]);
 
-        for (String s : lines) {
-            if (s.contains("IMAGES")) {
-                String[] split1 = s.split(" ");
-                String[] split2 = split1[1].split(("-"));
-                for (int i = Integer.parseInt(split2[0]); i <= Integer.parseInt(split2[1]); i++) {
-                    try {
-                        images.add(ImageIO.read(new File(path + "/" + i + ".png")));
-                    } catch (IOException e) {
-                        System.out.println("cant load animation");
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-            if (s.contains("WAIT")) {
-                String[] split1 = s.split(" ");
-                wait = Double.parseDouble(split1[1]);
-            }
-            if (s.contains("LOOP")) {
-                String[] split1 = s.split(" ");
-                loop = Boolean.parseBoolean(split1[1]);
+        for(int i = startId; i <= endId; i++){
+            try{
+                images.add(ImageIO.read(new File(path + i + ".png")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
-        return new Animation(images.toArray(new BufferedImage[0]), wait,loop);
+        return new Animation(images.toArray(new BufferedImage[0]),wait,loop);
     }
 
     public static AnimationController loadAnimationController(String path){
         AnimationController animationController = new AnimationController();
-        String defAnimation = "";
-        ArrayList<String> lines = new ArrayList<>();
 
-        try {
-            Scanner sc = new Scanner(new File(path + "/data.animc"));
+        String[] animNames = CustomFileReader.readComplexValue(path+"/data.animc","ANIMATIONS");
 
-            while (sc.hasNextLine()) {
-                lines.add(sc.nextLine());
-            }
-        } catch (IOException e) {
-            System.out.println("cant load animation");
-            throw new RuntimeException(e);
-        }
+        int animEnd = CustomFileReader.getValueLine(path+"/data.animc","END");
 
-        ArrayList<String> animNames = new ArrayList<>();
+        for(String s : animNames){
+            int animLine = CustomFileReader.getValueLine(path+"/data.animc",s,animEnd+1);
 
-        for(int i = 0; i < lines.size(); i++){
-            if(lines.get(i).contains("ANIMATIONS")){
-                int j = i+1;
-                while(!lines.get(j).contains("END")){
-                    animNames.add(lines.get(j));
-                    j++;
-                }
-            }
-        }
+            String animPath = CustomFileReader.readSimpleValue(path+"/data.animc","PATH",animLine,true);
+            animPath = animPath.split("\"")[1];
 
-        for(String animName : animNames){
-            String animPath = "";
+            String flip = CustomFileReader.readSimpleValue(path+"/data.animc","FLIP",animLine,true);
 
-            for(int i = 0; i < lines.size(); i++){
-                if(lines.get(i).contains(animName)){
-                    int j = i+1;
-                    while(!lines.get(j).contains("END")){
-                        if(lines.get(j).contains("PATH")){
-                            String[] split1 = lines.get(j).split(" ");
-                            String[] split2 = split1[1].split("\"");
-                            animPath = split2[1];
-                        }
-                        j++;
-                    }
+            Animation animation = loadAnimation(path + "/" + animPath);
+
+            if(flip != null){
+                if(flip.equals("X")){
+                    animation.flip(true);
+                } else if (flip.equals("Y")){
+                    animation.flip(false);
                 }
             }
 
-            Animation anim = AnimationLoader.loadAnimation(path + "/" + animPath);
 
-            for(int i = 0; i < lines.size(); i++){
-                if(lines.get(i).contains(animName)){
-                    int j = i+1;
-                    while(!lines.get(j).contains("END")){
-                        if(lines.get(j).contains("FLIP")){
-                            String[] split1 = lines.get(j).split(" ");
-                            if(split1[1].equals("X")){
-                                anim.flip(true);
-                            }
-                            else if(split1[1].equals("Y")){
-                                anim.flip(false);
-                            }
-                        }
-                        j++;
-                    }
-                }
-            }
-
-            animationController.addAnimation(animName,anim);
+            animationController.addAnimation(s,animation);
         }
 
         return animationController;

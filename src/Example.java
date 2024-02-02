@@ -7,7 +7,10 @@ public class Example {
         Player p = new Player();
         p.setPosition(50,50);
         engine.addGameObject(p);
-        engine.addGameObject(new Player(150));
 
+        Player p2 = new Player(150);
+        p2.setLayer(0);
+
+        engine.addGameObject(p2);
     }
 }

@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class AnimationController implements Iterator<BufferedImage> {
-    private HashMap<String,Animation> animations = new HashMap<>();private int iteration = 0;
+    private HashMap<String,Animation> animations = new HashMap<>();
+    private int iteration = 0;
 
     private Animation currentAnimation = null;
 

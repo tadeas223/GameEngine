@@ -13,7 +13,7 @@ public class GravityModule extends Module {
 
     @Override
     public void update(float time) {
-        source.addY((int) (-mass*gravity));
+        source.addY((int) (mass*gravity));
     }
 
     @Override

@@ -38,6 +38,11 @@ public class Player extends GameObject {
         addModule(collisionModule);
         addModule(animationModule);
 
+//        addModule(new GravityModule(10,1));
+
+
+        collisionModule.showCollider(true);
+
         animationModule.startAnimation("idle");
     }
 
