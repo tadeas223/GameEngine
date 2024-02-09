@@ -5,12 +5,17 @@ import gameObject.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
+
+import static gameObject.GameObject.getAllObjects;
 
 /**
  * This class draws each {@link GameObject} to the screen.
  */
 public class GamePanel extends JPanel {
+    private PriorityQueue<GameObject> priorityQueue = new PriorityQueue<>();
+
     public GamePanel() {
         setDoubleBuffered(true);
         setVisible(true);
@@ -22,12 +27,9 @@ public class GamePanel extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        PriorityQueue<GameObject> priorityQueue = new PriorityQueue<>();
+       priorityQueue = new PriorityQueue<>();
 
-        for (GameObject gameObject : Engine.getInstance().getGameObjects()) {
-            priorityQueue.add(gameObject);
-            priorityQueue.addAll(gameObject.getChildren());
-        }
+       priorityQueue.addAll(getAllObjects(new ArrayList<>(),Engine.getInstance().getGameObjects()));
 
         for (GameObject go : priorityQueue) {
             if (go.isActive() && go.getTexture() != null) {

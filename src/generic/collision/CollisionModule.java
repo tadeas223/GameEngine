@@ -3,27 +3,26 @@ package generic.collision;
 import engine.Engine;
 import gameObject.GameObject;
 import gameObject.Module;
-import tools.SizeLimitedQueue;
 import tools.Vector2Int;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class CollisionModule extends Module {
-    private Rectangle collider;
-    private boolean trigger;
-
-    private ArrayList<GameObject> collisions = new ArrayList<>();
     ArrayList<CollisionListener> listeners = new ArrayList<>();
-
-    private Vector2Int previousPos;
+    private Rectangle collider;
+    private boolean trigger = false;
+    private ArrayList<CollisionModule> collisions = new ArrayList<>();
+    private Vector2Int previousPos = null;
     private boolean showCollider = false;
 
     private GameObject colliderO;
 
 
-    public CollisionModule(Rectangle collider){
+    public CollisionModule(Rectangle collider) {
         this.collider = collider;
     }
 
@@ -34,68 +33,64 @@ public class CollisionModule extends Module {
 
     @Override
     public void update(float time) {
+        if(previousPos == null){
+            previousPos = source.getPosition();
+        }
 
-        for(GameObject parent : Engine.getInstance().getGameObjects()){
-            for(GameObject child : parent.getChildren()){
+        ArrayList<GameObject> objects = GameObject.getAllObjects(new ArrayList<>(), Engine.getInstance().getGameObjects());
 
-                if(child != source){
-                    if(detectCollision(child)){
-                        if(!collisions.contains(child)){
-                            collisions.add(child);
-                            callListenerEnter(child);
-                        }
+        for (GameObject gameObject : objects) {
 
-                        if(!trigger){
-                            source.setPosition(previousPos);
-                        }
-                    } else if(collisions.contains(child)){
-                        collisions.remove(child);
-                        callListenerExit(child);
-                    }
+            if (gameObject != source) {
+
+                Module[] modules = gameObject.findModule(this.getClass());
+
+                ArrayList<CollisionModule> collidingModules = new ArrayList<>();
+
+                for(Module m : modules){
+                    if(m.isActive()) collidingModules.add((CollisionModule) m);
                 }
 
-            }
 
-            if(parent != source){
-                if(detectCollision(parent)){
-                    if(!collisions.contains(parent)){
-                        collisions.add(parent);
-                        callListenerEnter(parent);
+                for (CollisionModule collisionModule : collidingModules) {
+                    if(detectCollision(collisionModule)){
+                        if (!collisions.contains(collisionModule)) {
+                            collisions.add(collisionModule);
+                            callListenerEnter(gameObject);
+                        }
+
+                        if (!collisionModule.isTrigger()) {
+                            source.setPosition(previousPos);
+                        }
+                    } else {
+                        collisions.remove(collisionModule);
+                        callListenerExit(gameObject);
                     }
 
-                    if(!trigger){
-                        source.setPosition(previousPos);
-                    }
-                } else if(collisions.contains(parent)){
-                    collisions.remove(parent);
-                    callListenerExit(parent);
                 }
             }
         }
 
 
-
-        if(showCollider){
+        if (showCollider) {
             colliderO.setPosition(source.getPosition());
         }
 
         previousPos = new Vector2Int(source.getPosition());
     }
-
-    public boolean detectCollision(GameObject g){
-        CollisionModule collisionModule = (CollisionModule) g.findModule(this.getClass());
-
-        if(collisionModule != null){
-            return (getRealRectangle().intersects(collisionModule.getRealRectangle()));
+    public boolean detectCollision(CollisionModule collisionModule){
+        if(!collisionModule.isActive()) return false;
+        if (getRealRectangle().intersects(collisionModule.getRealRectangle())) {
+            return true;
         }
         return false;
     }
 
-    public Rectangle getRealRectangle(){
-        return new Rectangle((int) (source.getX()+(collider.x*source.getScaleX())),
-                (int) (source.getY()+(collider.y*source.getScaleY())),
+    public Rectangle getRealRectangle() {
+        return new Rectangle((int) (source.getX() + (collider.x * source.getScaleX())),
+                (int) (source.getY() + (collider.y * source.getScaleY())),
                 (int) (collider.width * source.getScaleX()),
-                (int) (collider.height*source.getScaleY())
+                (int) (collider.height * source.getScaleY())
         );
     }
 
@@ -115,24 +110,23 @@ public class CollisionModule extends Module {
         this.trigger = trigger;
     }
 
-    public void showCollider(boolean show){
+    public void showCollider(boolean show) {
         showCollider = show;
-        if(show){
+        if (show) {
             createColliderObject();
-        }
-        else{
+        } else {
             colliderO = null;
         }
     }
 
-    private void createColliderObject(){
+    private void createColliderObject() {
         colliderO = new GameObject("collider");
 
-        BufferedImage texture = new BufferedImage(source.getWidth(),source.getHeight(),BufferedImage.TYPE_INT_ARGB);
+        BufferedImage texture = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = texture.createGraphics();
         Rectangle rectangle = getRealRectangle();
         g2.setColor(Color.red);
-        g2.fillRect(rectangle.x,rectangle.y,rectangle.width,rectangle.height);
+        g2.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         g2.dispose();
 
         colliderO.setTexture(texture);
@@ -143,26 +137,25 @@ public class CollisionModule extends Module {
 
     @Override
     public void start() {
-        previousPos = new Vector2Int(source.getPosition());
     }
 
-    public void callListenerEnter(GameObject g){
-        for (CollisionListener listener : listeners){
+    public void callListenerEnter(GameObject g) {
+        for (CollisionListener listener : listeners) {
             listener.onCollisionEnter(g);
         }
     }
 
-    public void callListenerExit(GameObject g){
-        for (CollisionListener listener : listeners){
+    public void callListenerExit(GameObject g) {
+        for (CollisionListener listener : listeners) {
             listener.onCollisionExit(g);
         }
     }
 
-    public void addCollisionListener(CollisionListener listener){
+    public void addCollisionListener(CollisionListener listener) {
         listeners.add(listener);
     }
 
-    public void removeColisionListener(CollisionListener listener){
+    public void removeColisionListener(CollisionListener listener) {
         listeners.remove(listener);
     }
 }

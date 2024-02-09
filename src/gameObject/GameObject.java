@@ -40,6 +40,10 @@ public class GameObject implements Updatable, Comparable<GameObject> {
         this.name = name;
     }
 
+    public GameObject(Vector2Int position) {
+        this.position = position;
+    }
+
     public GameObject(GameObject gameObject){
         this.name = gameObject.name;
         this.parent = gameObject.parent;
@@ -53,13 +57,14 @@ public class GameObject implements Updatable, Comparable<GameObject> {
     }
 
 
-    public Module findModule(Class<? extends Module> moduleClass) {
+    public Module[] findModule(Class<? extends Module> moduleClass) {
+        ArrayList<Module> moduleArrayList = new ArrayList<>();
         for (Module m : modules) {
             if (m.getClass() == moduleClass) {
-                return m;
+                moduleArrayList.add(m);
             }
         }
-        return null;
+        return moduleArrayList.toArray(new Module[0]);
     }
 
     //region Get/Set/Add/Remove
@@ -273,5 +278,15 @@ public class GameObject implements Updatable, Comparable<GameObject> {
     @Override
     public int compareTo(GameObject o) {
         return Integer.compare(layer, o.getLayer());
+    }
+
+    public static ArrayList<GameObject> getAllObjects(ArrayList<GameObject> outputList, ArrayList<GameObject> list) {
+        for (GameObject gameObject : list) {
+            if (!outputList.contains(gameObject)) {
+                getAllObjects(outputList, gameObject.getChildren());
+                outputList.add(gameObject);
+            }
+        }
+        return outputList;
     }
 }
